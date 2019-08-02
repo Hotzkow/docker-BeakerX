@@ -15,7 +15,8 @@ docker build -t jupyter .
 
 docker run arguments:<br>
 
-* `-p`: to specify port forwarding for the container, you have to expose the container port `8888` to open any notebooks in your hosts browser; e.g. `-p 8886:8888` allows you to open jupyter in your host browser at url `localhost:8886`
+* `-p`: to specify port forwarding for the container, you have to expose the container port `8888` to open any notebooks in your hosts browser; e.g. `-p 8886:8888` allows you to open jupyter in your host browser at url `localhost:8886`  
+If you want to restrict the port exposure to your *local machine* (instead of all network interfaces) you should use `-p 127.0.0.1:8886:8888`
 * `-it`: to start the container in interactive mode
 * `--rm`: to delete the container as soon as it is stopped
 
