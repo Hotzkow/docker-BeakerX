@@ -105,8 +105,8 @@ RUN  cd /home/$NB_USER && \
   maven \
   py4j \
   requests \
-# beakerx dependencies (use an older jupyterlab version since there seams to be some incompatibility/bugs with >=1.0)
-	&& sudo conda install -y -c conda-forge jupyterhub "jupyterlab<1.0.0" pyzmq pytest \
+# beakerx dependencies (for older versions, use an older jupyterlab version since there seams to be some incompatibility/bugs with >=1.0)
+	&& sudo conda install -y -c conda-forge jupyterhub "jupyterlab>=1.0.0" pyzmq pytest \
 	&& sudo conda clean --all -f -y && \
   npm cache clean --force && \
   rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
@@ -124,7 +124,6 @@ RUN sudo mkdir /home/beakerx && sudo chown ${NB_USER}:${NB_GID} /home/beakerx &&
 	git clone --single-branch --branch docker-src https://github.com/Hotzkow/beakerx.git /home/beakerx && \
 ### build BeakerX source code
 # FIXME: for some reason this works fine in windows but fails currently under mac
-	chmod +x /home/beakerx/setup.sh && \
 	cd /home/beakerx && \
 	./setup.sh && \
 	npm cache clean -f && \
@@ -158,7 +157,21 @@ RUN sudo chown -R $NB_USER:$NB_GID ${HOME}/.jupyter && \
 	jupyter labextension install beakerx-jupyterlab && \
 	jupyter nbextension enable beakerx --py --sys-prefix && \
 	jupyter nbextension enable beakerx_tabledisplay --py --sys-prefix && \
-	jupyter nbextension enable beakerx_databrowser --py --sys-prefix
+	jupyter nbextension enable beakerx_databrowser --py --sys-prefix && \
+	jupyter labextension install @agoose77/jupyterlab-markup && \
+	jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+	jupyter labextension install @jupyterlab/google-drive && \
+	jupyter labextension install @jupyterlab/toc && \
+	jupyter labextension install @krassowski/jupyterlab_go_to_definition && \
+	jupyter labextension install jupyterlab-topbar-extension && \
+	jupyter labextension install jupyterlab-system-monitor && \
+	jupyter labextension install @jupyterlab/celltags
+
+RUN jupyter labextension install jupyterlab-chart-editor
+
+# does not yet support newest jupyterlab version
+# RUN jupyter labextension install @risoms/mdl-jupyterlab-theme 
+
 
 CMD ["/opt/conda/bin/jupyter", "lab"]
 
@@ -170,4 +183,5 @@ CMD ["/opt/conda/bin/jupyter", "lab"]
 # RUN chmod +x /tini
 #ENTRYPOINT ["/usr/local/bin/tini", "--", "/docker-entrypoint.sh"]
 
-## NOTE: If you are using Docker 1.13 or greater, Tini is included in Docker itself. This includes all versions of Docker CE. To enable Tini, just pass the --init flag to docker run.
+## NOTE: If you are using Docker 1.13 or greater, Tini is included in Docker itself. This includes all versions of Docker CE. 
+#		To enable Tini, just pass the --init flag to docker run.
